@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
 
@@ -23,9 +24,12 @@ class ofApp : public ofBaseApp{
 
 		int		selectIndex(int x, int y);
 		void	drawVertices();
-		void	save();
-		void	load();
+		void	saveModel();
+		void	loadModel();
 		void	deleteIndex(int index);
+		void	setupGui();
+		void	loadSettings (int p );
+		void	saveSettings (int p );
 
 		struct VERTICE
 		{
@@ -33,17 +37,23 @@ class ofApp : public ofBaseApp{
 			vector<int> conexiones;		// índices dentro de vector<vertices>
 		};
 		
-		vector<VERTICE> vertices;
+		vector<VERTICE>		vertices;
 
-		bool	bMousePressed;
-		int		indexSelected;
+		bool				bMousePressed;
+		int					indexSelected;
 
-		ofPoint		lineFrom;
-		ofPoint		lineTo;
+		ofPoint				lineFrom;
+		ofPoint				lineTo;
 
-		int			indexHover;
+		int					indexHover;
 
-		bool bMovingVertex;
-		bool bHasDraggedVertex;
+		bool				bMovingVertex;
+		bool				bHasDraggedVertex;
 
+		int					preset;
+		ofxPanel			gui;
+		bool				bGuiVisible;
+		ofxColorSlider		paramBackGroundColor;
+		ofxColorSlider		paramLineColor;
+		ofxFloatSlider		paramLineWidth;
 };

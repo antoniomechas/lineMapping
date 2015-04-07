@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	
 	bMousePressed = false;
 	indexSelected = -1;
 	indexHover = -1;
@@ -9,6 +10,10 @@ void ofApp::setup(){
 	lineTo.set(0,0);
 	bMovingVertex = false;
 	bHasDraggedVertex = false;
+	bGuiVisible = false;
+	preset = 1;
+
+	setupGui();
 
 }
 
@@ -19,14 +24,18 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	
+	ofBackground(paramBackGroundColor);
+	//ofSetBackgroundColor(paramBackGroundColor);
+	ofSetLineWidth(paramLineWidth);
+	ofSetColor(paramLineColor);
+
 	drawVertices();
 
 	if (bMousePressed)
 	{
 		if (indexSelected > -1)
 		{
-			ofSetColor(255,255,255);
+			//ofSetColor(255,255,255);
 			ofFill();
 			ofCircle(vertices[indexSelected].centro, 5 + ofNoise(ofGetElapsedTimef()) * 20);
 		}
@@ -42,40 +51,57 @@ void ofApp::draw(){
 		ofLine(centro - ofPoint(10,0), centro + ofPoint(10,0));
 		ofLine(centro - ofPoint(0,10), centro + ofPoint(0,10));
 	}
+
+	if (bGuiVisible)
+	{
+		gui.draw();
+	}
 }
 
 void ofApp::drawVertices()
 {
+	ofSetColor(paramLineColor);
 	for (int i = 0 ; i < vertices.size() ; i++)
 	{
 		for (int v = 0 ; v < vertices[i].conexiones.size(); v++)
 		{
 			int index = vertices[i].conexiones[v];
-			ofSetColor(255,255,255);
 			ofLine(vertices[i].centro, vertices[index].centro);
 		}
-		ofSetColor(255,255,255);
 		ofFill();
-		ofCircle(vertices[i].centro, 5);
+		ofCircle(vertices[i].centro, 5 + paramLineWidth * .3);
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	
-	if (key == 's')
-		save();
-
-	if (key == 'l')
-		load();
-
-	if (key == OF_KEY_DEL)
+	switch (key)
 	{
-		if (indexSelected > -1)
-			deleteIndex(indexSelected);
-		bMousePressed = false;
-	}
+		case 'l':
+			loadModel();
+			break;
 
+		case OF_KEY_DEL:
+			if (indexSelected > -1)
+				deleteIndex(indexSelected);
+			bMousePressed = false;
+			break;
+
+		case ' ':
+			bGuiVisible = !bGuiVisible;
+			break;
+
+		case 's':
+			saveSettings(preset);
+			break;
+
+	}
+	if (key > '0' && key < '9')
+	{
+		preset = key - '0';
+		loadSettings(preset);
+	}	
 }
 
 //--------------------------------------------------------------
@@ -190,7 +216,7 @@ int ofApp::selectIndex(int x, int y)
 	return -1;
 }
 
-void ofApp::save()
+void ofApp::saveModel()
 {
 	ofBuffer dataBuffer;
 	stringstream t;
@@ -211,7 +237,7 @@ void ofApp::save()
 	bool fileWritten = ofBufferToFile("vertices.txt", dataBuffer);
 }
 
-void ofApp::load()
+void ofApp::loadModel()
 {
 	ofBuffer dataBuffer = ofBufferFromFile("vertices.txt");
 	vertices.clear();
@@ -269,4 +295,33 @@ void ofApp::deleteIndex (int index)
 	vertices[index].centro.set(-1,-1);
 	vertices[index].conexiones.clear();
 
+}
+
+void ofApp::setupGui()
+{
+	//--------------------------------------------------------------
+	bGuiVisible = false;
+    
+	gui.setup("lineMapping");
+    
+	gui.add(paramBackGroundColor.setup("BackGround", ofColor(0,0,0),ofColor(0,0),ofColor(255,255)));
+    gui.add(paramLineColor.setup("Line Color", ofColor(0,0,0),ofColor(0,0),ofColor(255,255)));
+    gui.add(paramLineWidth.setup("Line Width", 1,1,20));
+
+}
+
+void ofApp::loadSettings(int p)
+{
+	stringstream filename;
+	filename << "settings_" << p << ".xml";
+	gui.loadFromFile(filename.str()); 
+
+}
+
+void ofApp::saveSettings(int p)
+{
+	stringstream filename;
+	filename << "settings_" << p << ".xml";
+	gui.saveToFile(filename.str()); 
+	saveModel();
 }
