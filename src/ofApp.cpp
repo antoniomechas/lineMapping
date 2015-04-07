@@ -12,18 +12,39 @@ void ofApp::setup(){
 	bHasDraggedVertex = false;
 	bGuiVisible = false;
 	preset = 1;
+	paramEdit = false;
 
 	setupGui();
-
+	loadSettings(preset);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	
+	animationManager.update();
 
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	
+	if (paramEdit)
+		drawEdit();
+	else
+		drawAnimation();
+
+	if (bGuiVisible)
+	{
+		ofSetColor(255,255,255);
+		gui.draw();
+	}
+}
+
+//
+//Dibuja el modo edición del modelo
+//
+void ofApp::drawEdit()
+{
 	ofBackground(paramBackGroundColor);
 	//ofSetBackgroundColor(paramBackGroundColor);
 	ofSetLineWidth(paramLineWidth);
@@ -37,7 +58,7 @@ void ofApp::draw(){
 		{
 			//ofSetColor(255,255,255);
 			ofFill();
-			ofCircle(vertices[indexSelected].centro, 5 + ofNoise(ofGetElapsedTimef()) * 20);
+			ofCircle(animationManager.vertices[indexSelected].centro, 5 + ofNoise(ofGetElapsedTimef()) * 20);
 		}
 		ofLine(lineFrom, lineTo);
 	}
@@ -47,29 +68,33 @@ void ofApp::draw(){
 		cout << indexHover << endl;
 		ofSetColor(255,0,255);
 		//ofCircle(vertices[indexHover].centro, 5 + ofNoise(100. + ofGetElapsedTimef()) * 20);
-		ofPoint centro(vertices[indexHover].centro);
+		ofPoint centro(animationManager.vertices[indexHover].centro);
 		ofLine(centro - ofPoint(10,0), centro + ofPoint(10,0));
 		ofLine(centro - ofPoint(0,10), centro + ofPoint(0,10));
 	}
+}
 
-	if (bGuiVisible)
-	{
-		gui.draw();
-	}
+void ofApp::drawAnimation()
+{
+	ofBackground(0,0,0);
+	ofSetColor(255,255,255);
+	drawEdit();
+	ofSetColor(255,0,0);
+	animationManager.draw();
 }
 
 void ofApp::drawVertices()
 {
 	ofSetColor(paramLineColor);
-	for (int i = 0 ; i < vertices.size() ; i++)
+	for (int i = 0 ; i < animationManager.vertices.size() ; i++)
 	{
-		for (int v = 0 ; v < vertices[i].conexiones.size(); v++)
+		for (int v = 0 ; v < animationManager.vertices[i].conexiones.size(); v++)
 		{
-			int index = vertices[i].conexiones[v];
-			ofLine(vertices[i].centro, vertices[index].centro);
+			int index = animationManager.vertices[i].conexiones[v];
+			ofLine(animationManager.vertices[i].centro, animationManager.vertices[index].centro);
 		}
 		ofFill();
-		ofCircle(vertices[i].centro, 5 + paramLineWidth * .3);
+		ofCircle(animationManager.vertices[i].centro, 5 + paramLineWidth * .3);
 	}
 }
 
@@ -96,6 +121,10 @@ void ofApp::keyPressed(int key){
 			saveSettings(preset);
 			break;
 
+		case 'i':
+			animationManager.initRuta();
+			break;
+
 	}
 	if (key > '0' && key < '9')
 	{
@@ -111,6 +140,10 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
+
+	if (!paramEdit)
+		return;
+
 	lineTo.set(x,y);
 
 	indexHover = selectIndex(x,y);
@@ -119,9 +152,13 @@ void ofApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
 	//if (bMovingVertex)
+
+	if (!paramEdit)
+		return;
+
 	if (indexSelected > -1)
 	{
-		vertices[indexSelected].centro.set(x,y);
+		animationManager.vertices[indexSelected].centro.set(x,y);
 		bHasDraggedVertex = true;
 	}
 }
@@ -130,6 +167,10 @@ void ofApp::mouseDragged(int x, int y, int button){
 void ofApp::mousePressed(int x, int y, int button){
 	//cout << button << endl;
 	//Compruebo si es el segundo click
+	
+	if (!paramEdit)
+		return;
+
 	if (bMousePressed)
 	{
 		if (button == OF_MOUSE_BUTTON_3) //Boton derecho, anular
@@ -144,21 +185,21 @@ void ofApp::mousePressed(int x, int y, int button){
 			{
 				VERTICE vert2;
 				vert2.centro = lineTo;
-				vertices.push_back(vert2);
-				index1 = vertices.size() - 1;
+				animationManager.vertices.push_back(vert2);
+				index1 = animationManager.vertices.size() - 1;
 			}
 			else
 				index1 = indexHover;
 			
 			if (indexSelected > -1)
-				vertices[indexSelected].conexiones.push_back(index1);
+				animationManager.vertices[indexSelected].conexiones.push_back(index1);
 			else 
 			{
 				//Linea que no tiene un vertice origen (la primera linea de todas)
 				VERTICE vert1;
 				vert1.centro = lineFrom;
 				vert1.conexiones.push_back(index1);
-				vertices.push_back(vert1);
+				animationManager.vertices.push_back(vert1);
 			}
 			bMousePressed = false;
 			indexSelected = -1;
@@ -170,7 +211,7 @@ void ofApp::mousePressed(int x, int y, int button){
 		indexSelected = selectIndex(x,y);
 		if (indexSelected > -1)
 		{
-			lineFrom = vertices[indexSelected].centro;
+			lineFrom = animationManager.vertices[indexSelected].centro;
 			//if(ofGetKeyPressed(OF_KEY_CONTROL))
 				bMovingVertex = true;
 		}
@@ -181,6 +222,9 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+	if (!paramEdit)
+		return;
 	
 	if (bMovingVertex && bHasDraggedVertex)
 		bMousePressed = false;
@@ -208,9 +252,9 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 int ofApp::selectIndex(int x, int y)
 {
-	for (int i = 0 ; i < vertices.size(); i++)
+	for (int i = 0 ; i < animationManager.vertices.size(); i++)
 	{
-		if ( vertices[i].centro.distance(ofVec3f(x,y,0)) < 20 )
+		if ( animationManager.vertices[i].centro.distance(ofVec3f(x,y,0)) < 20 )
 			return i;
 	}
 	return -1;
@@ -220,15 +264,15 @@ void ofApp::saveModel()
 {
 	ofBuffer dataBuffer;
 	stringstream t;
-	for (int i = 0 ; i < vertices.size() ; i++)
+	for (int i = 0 ; i < animationManager.vertices.size() ; i++)
 	{
-		if (vertices[i].conexiones.size() == 0)
-			t << i << "," << vertices[i].centro.x << "," << vertices[i].centro.y << "," << -1 << endl;
+		if (animationManager.vertices[i].conexiones.size() == 0)
+			t << i << "," << animationManager.vertices[i].centro.x << "," << animationManager.vertices[i].centro.y << "," << -1 << endl;
 		else
 		{
-			for (int c = 0 ; c < vertices[i].conexiones.size() ; c++)
+			for (int c = 0 ; c < animationManager.vertices[i].conexiones.size() ; c++)
 			{
-				t << i << "," << vertices[i].centro.x << "," << vertices[i].centro.y << "," << vertices[i].conexiones[c] << endl;
+				t << i << "," << animationManager.vertices[i].centro.x << "," << animationManager.vertices[i].centro.y << "," << animationManager.vertices[i].conexiones[c] << endl;
 			}
 		}
 	}
@@ -240,7 +284,7 @@ void ofApp::saveModel()
 void ofApp::loadModel()
 {
 	ofBuffer dataBuffer = ofBufferFromFile("vertices.txt");
-	vertices.clear();
+	animationManager.vertices.clear();
 	string t = dataBuffer.getFirstLine();
 	vector<int> num;
 	while ( true )
@@ -268,14 +312,14 @@ void ofApp::loadModel()
 			if (num[3] != -1)
 				v.conexiones.push_back(num[3]);
 			int index = num[0];
-			if (vertices.size() == index)
+			if (animationManager.vertices.size() == index)
 			{
 				// es nuevo
-				vertices.push_back(v);
+				animationManager.vertices.push_back(v);
 			}
 			else
 			{
-				vertices[index].conexiones.push_back(num[3]);
+				animationManager.vertices[index].conexiones.push_back(num[3]);
 			}
 		}
 		if (dataBuffer.isLastLine())
@@ -287,13 +331,13 @@ void ofApp::loadModel()
 
 void ofApp::deleteIndex (int index)
 {
-	for (int i = 0 ; i < vertices.size() ; i++)
-		for (int c = 0 ; c < vertices[i].conexiones.size() ; c++) 
-			if (vertices[i].conexiones[c] == index)
-				vertices[i].conexiones.erase(vertices[i].conexiones.begin() + c);
+	for (int i = 0 ; i < animationManager.vertices.size() ; i++)
+		for (int c = 0 ; c < animationManager.vertices[i].conexiones.size() ; c++) 
+			if (animationManager.vertices[i].conexiones[c] == index)
+				animationManager.vertices[i].conexiones.erase(animationManager.vertices[i].conexiones.begin() + c);
 
-	vertices[index].centro.set(-1,-1);
-	vertices[index].conexiones.clear();
+	animationManager.vertices[index].centro.set(-1,-1);
+	animationManager.vertices[index].conexiones.clear();
 
 }
 
@@ -304,6 +348,7 @@ void ofApp::setupGui()
     
 	gui.setup("lineMapping");
     
+    gui.add(paramEdit.setup("Edit", false));
 	gui.add(paramBackGroundColor.setup("BackGround", ofColor(0,0,0),ofColor(0,0),ofColor(255,255)));
     gui.add(paramLineColor.setup("Line Color", ofColor(0,0,0),ofColor(0,0),ofColor(255,255)));
     gui.add(paramLineWidth.setup("Line Width", 1,1,20));
@@ -315,7 +360,7 @@ void ofApp::loadSettings(int p)
 	stringstream filename;
 	filename << "settings_" << p << ".xml";
 	gui.loadFromFile(filename.str()); 
-
+	paramEdit = false;
 }
 
 void ofApp::saveSettings(int p)

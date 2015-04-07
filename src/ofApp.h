@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "AnimationManager.h"
 
 class ofApp : public ofBaseApp{
 
@@ -30,14 +31,12 @@ class ofApp : public ofBaseApp{
 		void	setupGui();
 		void	loadSettings (int p );
 		void	saveSettings (int p );
+		void	drawEdit();
+		void	drawAnimation();
+		void	drawBallRute();
+		void	createRute();
 
-		struct VERTICE
-		{
-			ofPoint		centro;			// vertice
-			vector<int> conexiones;		// índices dentro de vector<vertices>
-		};
-		
-		vector<VERTICE>		vertices;
+		AnimationManager	animationManager;
 
 		bool				bMousePressed;
 		int					indexSelected;
@@ -56,4 +55,9 @@ class ofApp : public ofBaseApp{
 		ofxColorSlider		paramBackGroundColor;
 		ofxColorSlider		paramLineColor;
 		ofxFloatSlider		paramLineWidth;
+		ofxToggle			paramEdit;
+
+		vector<int>			ruta;
+		bool				bRutaInited;
+
 };
