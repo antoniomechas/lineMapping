@@ -1,7 +1,10 @@
 <lineMapping>
 	<BackGround>0, 0, 0, 255</BackGround>
 	<Line_Color>255, 255, 255, 255</Line_Color>
-	<Line_Width>2.33</Line_Width>
+	<Line_Width>20</Line_Width>
 <lineMapping/>
-<Edit>1</Edit>
+<Edit>0</Edit>
+<Velocidad>9.091</Velocidad>
+	<Line_Width_Min>1</Line_Width_Min>
+	<Line_Width_Max>8.6</Line_Width_Max>
 </lineMapping>

@@ -3,6 +3,9 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "AnimationManager.h"
+#include "ofxPostProcessing.h"
+#include "ofxBloom.h"
+#include "ofxGlow.h"
 
 class ofApp : public ofBaseApp{
 
@@ -57,7 +60,15 @@ class ofApp : public ofBaseApp{
 		ofxFloatSlider		paramLineWidth;
 		ofxToggle			paramEdit;
 
+		ofxFloatSlider		paramVelocidad;
+		ofxFloatSlider		paramLineWidthMin;
+		ofxFloatSlider		paramLineWidthMax;
+		
 		vector<int>			ruta;
 		bool				bRutaInited;
 
+		//ofxPostProcessing	post;
+		ofFbo				fbo;
+		ofxBloom			bloom;
+		ofxGlow				glow;
 };

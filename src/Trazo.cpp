@@ -1,8 +1,8 @@
 #include "Trazo.h"
 
-void Trazo::setup ( int toIndex, ofPoint from, ofPoint to, float totalTime )
+void Trazo::setup ( int fromIndex, int toIndex, ofPoint from, ofPoint to, float totalTime )
 {
-	
+	this->fromIndex = fromIndex;
 	this->toIndex = toIndex;
 	this->from = from;
 	this->to = to;

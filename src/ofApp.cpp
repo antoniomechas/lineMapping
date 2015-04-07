@@ -14,6 +14,11 @@ void ofApp::setup(){
 	preset = 1;
 	paramEdit = false;
 
+	//post.init(ofGetWidth(), ofGetHeight());
+ //   post.createPass<BloomPass>()->setEnabled(true);
+ //   post.createPass<BloomPass>()->setEnabled(true);
+    //post.createPass<BloomPass>()->setEnabled(true);
+
 	setupGui();
 	loadSettings(preset);
 }
@@ -78,9 +83,22 @@ void ofApp::drawAnimation()
 {
 	ofBackground(0,0,0);
 	ofSetColor(255,255,255);
-	drawEdit();
+	//post.begin();
+		ofSetColor(paramLineColor);
+		ofSetLineWidth( ofMap(ofNoise(ofGetElapsedTimef() * paramVelocidad), 0, 1, paramLineWidthMin, paramLineWidthMax) );
+		for (int i = 0 ; i < animationManager.vertices.size() ; i++)
+		{
+			for (int v = 0 ; v < animationManager.vertices[i].conexiones.size(); v++)
+			{
+				int index = animationManager.vertices[i].conexiones[v];
+				ofLine(animationManager.vertices[i].centro, animationManager.vertices[index].centro);
+			}
+		}
+	
+	//post.end();
+	//drawEdit();
 	ofSetColor(255,0,0);
-	animationManager.draw();
+	//animationManager.draw();
 }
 
 void ofApp::drawVertices()
@@ -352,6 +370,10 @@ void ofApp::setupGui()
 	gui.add(paramBackGroundColor.setup("BackGround", ofColor(0,0,0),ofColor(0,0),ofColor(255,255)));
     gui.add(paramLineColor.setup("Line Color", ofColor(0,0,0),ofColor(0,0),ofColor(255,255)));
     gui.add(paramLineWidth.setup("Line Width", 1,1,20));
+
+	gui.add(paramVelocidad.setup("Velocidad", 1,.1,100));
+    gui.add(paramLineWidthMin.setup("Line Width Min", 1,1,20));
+    gui.add(paramLineWidthMax.setup("Line Width Max", 1,1,20));
 
 }
 

@@ -5,11 +5,12 @@ class Trazo
 
 	public:
 		
-		void		setup	( int toIndex, ofPoint from, ofPoint to, float totalTime );
+		void		setup	( int fromIndex, int toIndex, ofPoint from, ofPoint to, float totalTime );
 		void		update	( );
 		void		draw	( );
 		bool		isDone	( );
 
+		int			fromIndex;
 		int			toIndex;
 
 	protected:

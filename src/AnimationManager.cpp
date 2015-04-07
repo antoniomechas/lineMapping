@@ -99,7 +99,7 @@ void AnimationManager::addTrazosForIndex(int index)
 	for (int i = 0 ; i < conn.size() ; i++)
 	{
 		Trazo trazo;
-		trazo.setup(conn[i], vertices[index].centro, vertices[conn[i]].centro, 1000);
+		trazo.setup(index, conn[i], vertices[index].centro, vertices[conn[i]].centro, 1000);
 		trazos.push_back(trazo);
 		doneIndexes.push_back(conn[i]);
 	}
