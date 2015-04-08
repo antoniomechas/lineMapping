@@ -3,6 +3,11 @@
 
 #include "ofMain.h"
 #include "Trazo.h"
+#include "ofxGui.h"
+
+#define ANIMATION_MODE_BOLAS	0
+#define ANIMATION_MODE_LINEAS	1
+#define ANIMATION_MODE_MAX		2
 
 struct VERTICE
 {
@@ -23,14 +28,30 @@ class AnimationManager
 		vector<VERTICE>		vertices;
 		bool				bIsDirty;
 
+		ofxIntSlider		paramAnimationMode;
+		ofxFloatSlider		paramTrazoMinSpeed;			//Velocidad de las bolas
+		ofxFloatSlider		paramTrazoMaxSpeed;
+		ofxFloatSlider		paramVelocidadVertices;	//Velocidad de rotación de los vertices	
+		ofxFloatSlider		paramVelocidad;
+		ofxFloatSlider		paramLineWidthMin;
+		ofxFloatSlider		paramLineWidthMax;
+
 	protected:
 
-		void				addTrazosForIndex(int index);
-		void				getIndexConnections(int index, vector<int> &connections);
-		bool				isIndexDone(int index);
-
-		//vector<int>			ruta;
-		vector<int>			doneIndexes;
+		void				drawBolas();
+		void				drawLineas();
+		void				addTrazosForIndex		( int index, vector<Trazo> &trazosNew);
+		void				getIndexConnections		( int index, vector<int> &connections);
+		bool				isIndexDone				( int index);
+		bool				isTrazoActivo			( int from, int to);
 		
-		vector<Trazo> trazos;
+		struct LINEA
+		{
+			int from;
+			int to;
+		};
+		vector<LINEA>		doneLines;
+		vector<int>			doneIndexes;
+
+		vector<Trazo>		trazos;
 };

@@ -14,10 +14,12 @@ void ofApp::setup(){
 	preset = 1;
 	paramEdit = false;
 
-	//post.init(ofGetWidth(), ofGetHeight());
- //   post.createPass<BloomPass>()->setEnabled(true);
- //   post.createPass<BloomPass>()->setEnabled(true);
+	post2.init(ofGetWidth(), ofGetHeight());
+    post2.createPass<BloomPass>()->setEnabled(true);
+    post2.createPass<BloomPass>()->setEnabled(true);
     //post.createPass<BloomPass>()->setEnabled(true);
+	bloom.allocate(ofGetWidth(), ofGetHeight());
+	glow.allocate(ofGetWidth(), ofGetHeight());
 
 	setupGui();
 	loadSettings(preset);
@@ -27,6 +29,7 @@ void ofApp::setup(){
 void ofApp::update(){
 	
 	animationManager.update();
+
 
 }
 
@@ -83,22 +86,32 @@ void ofApp::drawAnimation()
 {
 	ofBackground(0,0,0);
 	ofSetColor(255,255,255);
-	//post.begin();
-		ofSetColor(paramLineColor);
-		ofSetLineWidth( ofMap(ofNoise(ofGetElapsedTimef() * paramVelocidad), 0, 1, paramLineWidthMin, paramLineWidthMax) );
-		for (int i = 0 ; i < animationManager.vertices.size() ; i++)
-		{
-			for (int v = 0 ; v < animationManager.vertices[i].conexiones.size(); v++)
-			{
-				int index = animationManager.vertices[i].conexiones[v];
-				ofLine(animationManager.vertices[i].centro, animationManager.vertices[index].centro);
-			}
-		}
-	
-	//post.end();
+	//glow.setRadius( 1 + ofNoise(ofGetElapsedTimef() * paramVelocidad) * 3);
+	//bloom.setRadius( 1 );
+
+	//glow.draw();
 	//drawEdit();
-	ofSetColor(255,0,0);
-	//animationManager.draw();
+	//ofSetColor(255,0,0);
+	if (paramFxOn)
+	{
+		//bloom.passes = paramFxPasses;
+		//bloom.radius = paramFxRadius;
+		//bloom.begin();
+		post2.begin();
+	}
+
+	//ofBackground(0,0,0);
+	ofSetColor(paramLineColor);
+	animationManager.draw();
+	
+	if (paramFxOn)
+	{	
+		post2.end();
+		//bloom.end();
+		//bloom.update();
+		//ofSetColor(255,255,255);
+		//bloom.draw();
+	}
 }
 
 void ofApp::drawVertices()
@@ -371,9 +384,17 @@ void ofApp::setupGui()
     gui.add(paramLineColor.setup("Line Color", ofColor(0,0,0),ofColor(0,0),ofColor(255,255)));
     gui.add(paramLineWidth.setup("Line Width", 1,1,20));
 
-	gui.add(paramVelocidad.setup("Velocidad", 1,.1,100));
-    gui.add(paramLineWidthMin.setup("Line Width Min", 1,1,20));
-    gui.add(paramLineWidthMax.setup("Line Width Max", 1,1,20));
+	gui.add(animationManager.paramAnimationMode.setup("Animation Mode", 0, 0, ANIMATION_MODE_MAX -1 ));
+	gui.add(animationManager.paramVelocidad.setup("Velocidad", 1,.1,100));
+    gui.add(animationManager.paramLineWidthMin.setup("Line Width Min", 1,1,20));
+    gui.add(animationManager.paramLineWidthMax.setup("Line Width Max", 1,1,20));
+	gui.add(animationManager.paramVelocidadVertices.setup("Vel Vertices", 0, 0, 10));
+    gui.add(animationManager.paramTrazoMinSpeed.setup("Trazo Min Speed", 100,100,10000));
+    gui.add(animationManager.paramTrazoMaxSpeed.setup("Trazo Max Speed", 100,100,10000));
+
+	gui.add(paramFxOn.setup("Fx On", false));
+	gui.add(paramFxPasses.setup("Fx Passes", 1,1,15));
+	gui.add(paramFxRadius.setup("Fx Radius", 1,1,15));
 
 }
 

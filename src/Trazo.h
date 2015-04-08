@@ -20,4 +20,6 @@ class Trazo
 		float		totalTime;
 		float		startTime;
 		ofPoint		posActual;
+		bool		bIsDone;
+
 };

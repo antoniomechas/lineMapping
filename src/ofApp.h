@@ -60,14 +60,15 @@ class ofApp : public ofBaseApp{
 		ofxFloatSlider		paramLineWidth;
 		ofxToggle			paramEdit;
 
-		ofxFloatSlider		paramVelocidad;
-		ofxFloatSlider		paramLineWidthMin;
-		ofxFloatSlider		paramLineWidthMax;
-		
+		ofxToggle			paramFxOn;
+		ofxIntSlider		paramFxRadius;
+		ofxIntSlider		paramFxPasses;
+
 		vector<int>			ruta;
 		bool				bRutaInited;
 
-		//ofxPostProcessing	post;
+		ofxPostProcessing	post1;
+		ofxPostProcessing	post2;
 		ofFbo				fbo;
 		ofxBloom			bloom;
 		ofxGlow				glow;

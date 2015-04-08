@@ -1,10 +1,17 @@
 <lineMapping>
 	<BackGround>0, 0, 0, 255</BackGround>
 	<Line_Color>255, 255, 255, 255</Line_Color>
-	<Line_Width>20</Line_Width>
+	<Line_Width>1</Line_Width>
 <lineMapping/>
 <Edit>0</Edit>
-<Velocidad>9.091</Velocidad>
-	<Line_Width_Min>1</Line_Width_Min>
-	<Line_Width_Max>8.6</Line_Width_Max>
+<Velocidad>4.096</Velocidad>
+	<Line_Width_Min>11.07</Line_Width_Min>
+	<Line_Width_Max>16.58</Line_Width_Max>
+<Trazo_Min_Speed>1337.5</Trazo_Min_Speed>
+	<Trazo_Max_Speed>1337.5</Trazo_Max_Speed>
+<Fx_On>0</Fx_On>
+	<Fx_Passes>1</Fx_Passes>
+	<Fx_Radius>1</Fx_Radius>
+<Animation_Mode>1</Animation_Mode>
+	<Vel_Vertices>1.05</Vel_Vertices>
 </lineMapping>

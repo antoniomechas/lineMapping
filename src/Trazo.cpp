@@ -10,6 +10,7 @@ void Trazo::setup ( int fromIndex, int toIndex, ofPoint from, ofPoint to, float 
 	
 	startTime = ofGetElapsedTimeMillis();
 	posActual = from;
+	bIsDone = false;
 
 }
 
@@ -20,6 +21,9 @@ void Trazo::update ( )
 	v.normalize();
 	float d = ofMap(ofGetElapsedTimeMillis() - startTime, 0, totalTime, 0, dist, true);
 	posActual = from  + v * d;
+	
+	if ( (ofGetElapsedTimeMillis() - startTime) >= totalTime)
+		bIsDone = true;
 }
 
 void Trazo::draw ( )
@@ -29,9 +33,5 @@ void Trazo::draw ( )
 
 bool Trazo::isDone ()
 {
-	
-	if ( (ofGetElapsedTimeMillis() - startTime) >= totalTime)
-		return true;
-	
-	return false;
+	return bIsDone;
 }
