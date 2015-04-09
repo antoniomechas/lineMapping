@@ -17,7 +17,9 @@ void ofApp::setup(){
 	post2.init(ofGetWidth(), ofGetHeight());
     post2.createPass<BloomPass>()->setEnabled(true);
     post2.createPass<BloomPass>()->setEnabled(true);
-    //post.createPass<BloomPass>()->setEnabled(true);
+    post2.createPass<BloomPass>()->setEnabled(true);
+    post2.createPass<BloomPass>()->setEnabled(true);
+    post2.createPass<FxaaPass>()->setEnabled(true);
 	bloom.allocate(ofGetWidth(), ofGetHeight());
 	glow.allocate(ofGetWidth(), ofGetHeight());
 
@@ -97,6 +99,17 @@ void ofApp::drawAnimation()
 		//bloom.passes = paramFxPasses;
 		//bloom.radius = paramFxRadius;
 		//bloom.begin();
+		for (int t = 0 ; t < 3 ; t++)
+			post2[t]->setEnabled(false);
+
+		if (paramFxPasses > 1)
+			post2[0]->setEnabled(true);
+		if (paramFxPasses > 2)
+			post2[1]->setEnabled(true);
+		if (paramFxPasses > 3)
+			post2[2]->setEnabled(true);
+		if (paramFxPasses > 4)
+			post2[3]->setEnabled(true);
 		post2.begin();
 	}
 
@@ -385,11 +398,20 @@ void ofApp::setupGui()
     gui.add(paramLineWidth.setup("Line Width", 1,1,20));
 
 	gui.add(animationManager.paramAnimationMode.setup("Animation Mode", 0, 0, ANIMATION_MODE_MAX -1 ));
-	gui.add(animationManager.paramVelocidad.setup("Velocidad", 1,.1,100));
+	gui.add(animationManager.paramVelocidad.setup("Velocidad", 1,.1,10));
+
+	gui.add(animationManager.paramDrawBolas.setup("Draw Bolas", false));
+	gui.add(animationManager.paramBolasMinSize.setup("Bolas min size", 1,1,40));
+	gui.add(animationManager.paramBolasMaxSize.setup("Bolas max size", 1,1,40));
+	gui.add(animationManager.paramVelocidadVertices.setup("Vel Vertices", 0, 0, 10));
+	gui.add(animationManager.paramVerticesMaxDistance.setup("Vertices Max Dst", 1, 1, 20));
+
+	gui.add(animationManager.paramAnimateWidth.setup("Trazo Animate Width", false));
     gui.add(animationManager.paramLineWidthMin.setup("Line Width Min", 1,1,20));
     gui.add(animationManager.paramLineWidthMax.setup("Line Width Max", 1,1,20));
-	gui.add(animationManager.paramVelocidadVertices.setup("Vel Vertices", 0, 0, 10));
-    gui.add(animationManager.paramTrazoMinSpeed.setup("Trazo Min Speed", 100,100,10000));
+
+
+	gui.add(animationManager.paramTrazoMinSpeed.setup("Trazo Min Speed", 100,100,10000));
     gui.add(animationManager.paramTrazoMaxSpeed.setup("Trazo Max Speed", 100,100,10000));
 
 	gui.add(paramFxOn.setup("Fx On", false));

@@ -130,28 +130,38 @@ void AnimationManager::drawBolas()
 
 void AnimationManager::drawLineas()
 {
+	if (paramAnimateWidth)
+		ofSetLineWidth(ofMap(ofNoise(ofGetElapsedTimef() * paramVelocidad), 0, 1, paramLineWidthMin, paramLineWidthMax));
+	else
+		ofSetLineWidth(paramLineWidthMin);
 
-	ofSetLineWidth(paramLineWidthMin);
+	ofVec2f offset(0,0);
+	ofVec2f offset2(0,0);
 	for (int i = 0 ; i < vertices.size() ; i++)
 	{
 		for (int v = 0 ; v < vertices[i].conexiones.size(); v++)
 		{
 			int index = vertices[i].conexiones[v];
-			ofVec2f offset(0,0);
-			ofVec2f offset2(0,0);
 			if (paramVelocidadVertices > 0)
 			{
-				float x = ofSignedNoise(ofGetElapsedTimef() * paramVelocidadVertices, 0) * 3;
-				float y = ofSignedNoise(0, ofGetElapsedTimef() * paramVelocidadVertices) * 3;
+				float x = ofSignedNoise(ofGetElapsedTimef() * paramVelocidadVertices, vertices[i].centro.y) * paramVerticesMaxDistance;
+				float y = ofSignedNoise(vertices[i].centro.x, ofGetElapsedTimef() * paramVelocidadVertices) * paramVerticesMaxDistance;
 				offset.set(x,y);
-				x = ofSignedNoise(100.+ ofGetElapsedTimef() * paramVelocidadVertices, 0) * 3;
-				y = ofSignedNoise(0, 100. + ofGetElapsedTimef() * paramVelocidadVertices) * 3;
+				x = ofSignedNoise(ofGetElapsedTimef() * paramVelocidadVertices, vertices[index].centro.y) * paramVerticesMaxDistance;
+				y = ofSignedNoise(vertices[index].centro.x, ofGetElapsedTimef() * paramVelocidadVertices) * paramVerticesMaxDistance;
 				offset2.set(x,y);
 			}
 			ofLine(vertices[i].centro + offset, vertices[index].centro + offset2);
 		}
-		ofFill();
-		ofCircle(vertices[i].centro, 5 + paramLineWidthMin * .3);
+		if (paramDrawBolas)
+		{
+			ofFill();
+			float radius = ofMap(ofNoise((float)i + ofGetElapsedTimef() * paramVelocidad),0,1,paramBolasMinSize, paramBolasMaxSize);
+			float x = ofSignedNoise(ofGetElapsedTimef() * paramVelocidadVertices, vertices[i].centro.y) * paramVerticesMaxDistance;
+			float y = ofSignedNoise(vertices[i].centro.x, ofGetElapsedTimef() * paramVelocidadVertices) * paramVerticesMaxDistance;
+			offset.set(x,y);
+			ofCircle(vertices[i].centro + offset, radius );
+		}
 	}
 }
 

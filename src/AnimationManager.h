@@ -29,10 +29,15 @@ class AnimationManager
 		bool				bIsDirty;
 
 		ofxIntSlider		paramAnimationMode;
+		ofxToggle			paramDrawBolas;
+		ofxFloatSlider		paramBolasMinSize;
+		ofxFloatSlider		paramBolasMaxSize;
 		ofxFloatSlider		paramTrazoMinSpeed;			//Velocidad de las bolas
 		ofxFloatSlider		paramTrazoMaxSpeed;
-		ofxFloatSlider		paramVelocidadVertices;	//Velocidad de rotación de los vertices	
+		ofxFloatSlider		paramVelocidadVertices;		//Velocidad de rotación de los vertices	
+		ofxFloatSlider		paramVerticesMaxDistance;		//Velocidad de rotación de los vertices	
 		ofxFloatSlider		paramVelocidad;
+		ofxToggle			paramAnimateWidth;
 		ofxFloatSlider		paramLineWidthMin;
 		ofxFloatSlider		paramLineWidthMax;
 
