@@ -69,7 +69,13 @@ void ofApp::drawEdit()
 			//ofSetColor(255,255,255);
 			ofFill();
 			ofCircle(animationManager.vertices[indexSelected].centro, 5 + ofNoise(ofGetElapsedTimef()) * 20);
+			ofSetColor(255,0,255);
+			//ofCircle(vertices[indexHover].centro, 5 + ofNoise(100. + ofGetElapsedTimef()) * 20);
+			ofPoint centro(animationManager.vertices[indexSelected].centro);
+			ofLine(centro - ofPoint(10,0), centro + ofPoint(10,0));
+			ofLine(centro - ofPoint(0,10), centro + ofPoint(0,10));
 		}
+		ofSetColor(paramLineColor);
 		ofLine(lineFrom, lineTo);
 	}
 
@@ -167,6 +173,23 @@ void ofApp::keyPressed(int key){
 
 		case 'i':
 			animationManager.initRuta();
+			break;
+
+		case OF_KEY_LEFT:
+			if (bMousePressed && indexSelected > -1)
+				animationManager.vertices[indexSelected].centro.x--;
+			break;
+		case OF_KEY_RIGHT:
+			if (bMousePressed && indexSelected > -1)
+				animationManager.vertices[indexSelected].centro.x++;
+			break;
+		case OF_KEY_UP:
+			if (bMousePressed && indexSelected > -1)
+				animationManager.vertices[indexSelected].centro.y--;
+			break;
+		case OF_KEY_DOWN:
+			if (bMousePressed && indexSelected > -1)
+				animationManager.vertices[indexSelected].centro.y++;
 			break;
 
 	}
