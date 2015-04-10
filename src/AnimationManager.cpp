@@ -14,7 +14,14 @@ void AnimationManager::initRuta()
 	if (vertices.size() == 0)
 		return;
 
-	addTrazosForIndex(ofRandom(vertices.size()-1), trazos);
+	resetIndexesDone();
+	int i = ofRandom(vertices.size()-1);
+	while ( ! vertices[i].enabled )
+	{
+		i = ofRandom(vertices.size()-1);
+	}
+
+	addTrazosForIndex(i, trazos);
 }
 
 //
@@ -29,7 +36,7 @@ void AnimationManager::getIndexConnections(int index, vector<int> &connections)
 	{
 		for (int c = 0 ; c < vertices[index].conexiones.size() ; c++)
 		{
-			if (!isIndexDone(vertices[index].conexiones[c]))
+			//if (!isIndexDone(vertices[index].conexiones[c]))
 				connections.push_back(vertices[index].conexiones[c]);
 		}
 	}
@@ -39,7 +46,8 @@ void AnimationManager::getIndexConnections(int index, vector<int> &connections)
 		for (int c = 0 ; c < vertices[i].conexiones.size() ; c++)
 		{
 			int ind = vertices[i].conexiones[c];
-			if ( i != index && ind == index && !isIndexDone(i) )
+			//if ( i != index && ind == index && !isIndexDone(i) )
+			if ( i != index && ind == index )
 			{
 				connections.push_back(i);
 				//cout << "PARA: " << index << " DESDE " << i << endl;
@@ -82,40 +90,46 @@ void AnimationManager::update()
 			vertices[i].lineWidth = paramLineWidthMin;
 	}
 
-	vector<Trazo> trazosNew;
-	vector<Trazo>::iterator it = trazos.begin();
-	while ( it != trazos.end() )
+	if (paramAnimationMode == ANIMATION_MODE_BOLAS)
 	{
-		it->update();
-		if (it->isDone())
+
+		vector<Trazo> trazosNew;
+		vector<Trazo>::iterator it = trazos.begin();
+		while ( it != trazos.end() )
 		{
-			addTrazosForIndex(it->toIndex, trazosNew);
-			it = trazos.erase(it);
-		}
-		else
-		{
-			++it;
-		}
-	}
-	
-	//Elimina duplicados
-	for (int i = 0 ; i < trazosNew.size() ; i++)
-	{
-		for (int k = 0 ; k < trazosNew.size() ; k++)
-		{
-			if (i != k)
+			it->update();
+			if (it->isDone())
 			{
-				if (trazosNew[i].fromIndex == trazosNew[k].fromIndex && trazosNew[i].toIndex == trazosNew[k].toIndex)
-				{
-					trazosNew.erase(trazosNew.begin() + k);
-					k--; 
-				}
+				//if (!vertices[it->toIndex].done)
+					addTrazosForIndex(it->toIndex, trazosNew);
+				//it = trazos.erase(it);
+				++it;
+			}
+			else
+			{
+				++it;
 			}
 		}
+	
+		//Elimina duplicados
+		for (int i = 0 ; i < trazosNew.size() ; i++)
+		{
+			for (int k = 0 ; k < trazosNew.size() ; k++)
+			{
+				if (i != k)
+				{
+					if (trazosNew[i].fromIndex == trazosNew[k].fromIndex && trazosNew[i].toIndex == trazosNew[k].toIndex)
+					{
+						trazosNew.erase(trazosNew.begin() + k);
+						k--; 
+					}
+				}
+			}
 		
-	}
+		}
 
-	trazos.insert(trazos.end(),trazosNew.begin(), trazosNew.end());
+		trazos.insert(trazos.end(),trazosNew.begin(), trazosNew.end());
+	}
 }
 
 void AnimationManager::draw()
@@ -140,6 +154,13 @@ void AnimationManager::drawBolas()
 	{
 		trazos[i].draw();
 	}
+	ofNoFill();
+	ofSetColor(255,0,0);
+	for (int i = 0 ; i < vertices.size() ; i++)
+	{
+		if (vertices[i].done)
+			ofCircle(vertices[i].centro,10);
+	}
 }
 
 void AnimationManager::drawLineas()
@@ -156,7 +177,7 @@ void AnimationManager::drawLineas()
 	ofVec2f offset2(0,0);
 	for (int i = 0 ; i < vertices.size() ; i++)
 	{
-		if (vertices[i].centro.x != -1 && vertices[i].centro.y != -1)
+		if (vertices[i].enabled)
 		{
 
 			for (int v = 0 ; v < vertices[i].conexiones.size(); v++)
@@ -222,7 +243,52 @@ void AnimationManager::addTrazosForIndex(int index, vector<Trazo> &trazosNew)
 			//doneIndexes.push_back(conn[i]);
 		}
 	}
+	addDoneIndex (index);
 	//doneIndexes.push_back(index);
+}
+
+void AnimationManager::addDoneIndex ( int index)
+{
+	vertices[index].done = true;
+	//return;
+	//bool b = false;
+	//for (int i = 0 ; i < doneIndexes.size(); i++)
+	//	if (doneIndexes[i] == index)
+	//		b = true;
+
+	//if (!b)
+	//{
+	//	doneIndexes.push_back(index);
+	//	cout << "añadido index: " << index << ", total = " << doneIndexes.size() << ", total vertices = " << vertices.size() << endl;
+	//}
+}
+
+bool AnimationManager::allIndexesDone()
+{
+	bool all = true;
+	for (int i = 0 ; i < vertices.size() ; i++)
+	{
+		if (vertices[i].enabled && !vertices[i].done)
+			all = false;
+	}
+	//cout << all << "(" << k << "),not done " << c << " de un total de " << vertices.size() << endl;
+	return all;
+
+	//if (vertices.size() == doneIndexes.size())
+	//	return true;
+
+	//return false;
+
+}
+
+void AnimationManager::resetIndexesDone()
+{
+	for (int i = 0 ; i < vertices.size() ; i++)
+		vertices[i].done = false;
+	
+	//trazos.clear();
+	//doneIndexes.clear();
+
 }
 
 bool AnimationManager::isTrazoActivo(int from, int to)
@@ -230,7 +296,8 @@ bool AnimationManager::isTrazoActivo(int from, int to)
 	
 	for (int i = 0 ; i < trazos.size() ; i++)
 	{
-		if (trazos[i].fromIndex == from && trazos[i].toIndex == to)
+		if ( (trazos[i].fromIndex == from && trazos[i].toIndex == to) ||
+			(trazos[i].fromIndex == to && trazos[i].toIndex == from) )
 			return true;
 	}
 	

@@ -18,11 +18,15 @@ void Trazo::setup ( int fromIndex, int toIndex, ofPoint from, ofPoint to, float 
 	startTime = ofGetElapsedTimeMillis();
 	posActual = from;
 	bIsDone = false;
+	//bEnabled = true;
 
 }
 
 void Trazo::update ( )
 {
+	if (bIsDone)
+		return;
+
 	ofVec2f v = to - from;
 	float dist = v.length();
 	v.normalize();
@@ -42,6 +46,14 @@ void Trazo::draw ( )
 		mesh.addVertex(posActual);
 		mesh.addColor(*colorFrom);
 		mesh.addColor(*colorTo);
+		//mesh.addVertex(from);
+		//mesh.addVertex(posActual);
+		//mesh.addVertex(posActual);
+		//mesh.addVertex(to);
+		//mesh.addColor(ofColor(0));
+		//mesh.addColor(ofColor(255));
+		//mesh.addColor(ofColor(255));
+		//mesh.addColor(ofColor(0));
 		mesh.setMode(OF_PRIMITIVE_LINES);
 		ofSetLineWidth(*width);
 		mesh.drawWireframe();

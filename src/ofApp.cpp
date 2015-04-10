@@ -26,15 +26,26 @@ void ofApp::setup(){
 	setupGui();
 	loadSettings(preset);
 
-	ofxSpout::init("ofxSpout sender example", ofGetWidth(), ofGetHeight(), true);	
-
+	ofxSpout::init("lineMapping", ofGetWidth(), ofGetHeight(), true);	
+	loopCount = 0;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	
 	animationManager.update();
-
+	if (animationManager.allIndexesDone())
+	{
+		animationManager.resetIndexesDone();
+		animationManager.initRuta();
+		loopCount++;	
+		//cout << "loop: " << loopCount << endl;
+		if (loopCount > 3)
+		{
+			loopCount = 0;
+			animationManager.initRuta();
+		}
+	}
 
 }
 
@@ -261,6 +272,7 @@ void ofApp::mousePressed(int x, int y, int button){
 			{
 				VERTICE vert2;
 				vert2.centro = lineTo;
+				vert2.enabled = true;
 				animationManager.vertices.push_back(vert2);
 				index1 = animationManager.vertices.size() - 1;
 			}
@@ -274,6 +286,7 @@ void ofApp::mousePressed(int x, int y, int button){
 				//Linea que no tiene un vertice origen (la primera linea de todas)
 				VERTICE vert1;
 				vert1.centro = lineFrom;
+				vert1.enabled = true;
 				vert1.conexiones.push_back(index1);
 				animationManager.vertices.push_back(vert1);
 			}
@@ -385,6 +398,12 @@ void ofApp::loadModel()
 			VERTICE v;
 			v.centro.x = num[1];
 			v.centro.y = num[2];
+			
+			if (v.centro.x == -1 && v.centro.y == -1)
+				v.enabled = false;
+			else
+				v.enabled = true;
+
 			if (num[3] != -1)
 				v.conexiones.push_back(num[3]);
 			int index = num[0];
@@ -412,6 +431,7 @@ void ofApp::deleteIndex (int index)
 			if (animationManager.vertices[i].conexiones[c] == index)
 				animationManager.vertices[i].conexiones.erase(animationManager.vertices[i].conexiones.begin() + c);
 
+	animationManager.vertices[index].enabled = false;
 	animationManager.vertices[index].centro.set(-1,-1);
 	animationManager.vertices[index].conexiones.clear();
 

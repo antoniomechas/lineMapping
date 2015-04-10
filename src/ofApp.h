@@ -75,4 +75,7 @@ class ofApp : public ofBaseApp{
 		ofFbo				fbo;
 		ofxBloom			bloom;
 		ofxGlow				glow;
+
+		int					loopCount;
+
 };

@@ -15,6 +15,8 @@ struct VERTICE
 	vector<int> conexiones;		// índices dentro de vector<vertices>
 	ofColor		color;
 	float		lineWidth;
+	bool		done;
+	bool		enabled;
 };
 
 class AnimationManager
@@ -26,6 +28,8 @@ class AnimationManager
 		void				initRuta			( );
 		void				update				( );
 		void				draw				( );
+		bool				allIndexesDone		( );
+		void 				resetIndexesDone	( );
 
 		vector<VERTICE>		vertices;
 		bool				bIsDirty;
@@ -53,7 +57,8 @@ class AnimationManager
 		void				getIndexConnections		( int index, vector<int> &connections);
 		bool				isIndexDone				( int index);
 		bool				isTrazoActivo			( int from, int to);
-		
+		void				addDoneIndex			( int index );
+
 		struct LINEA
 		{
 			int from;
