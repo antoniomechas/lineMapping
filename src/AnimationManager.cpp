@@ -14,7 +14,7 @@ void AnimationManager::initRuta()
 	if (vertices.size() == 0)
 		return;
 
-	addTrazosForIndex(0, trazos);
+	addTrazosForIndex(ofRandom(vertices.size()-1), trazos);
 }
 
 //
@@ -68,6 +68,20 @@ bool AnimationManager::isIndexDone(int index)
 
 void AnimationManager::update()
 {
+	//Establece el color de los vertices y el width
+	for (int i = 0 ; i < vertices.size() ; i++)
+	{
+		float c1 = 1.0;
+		if (paramAnimateColor)
+			c1 = ofNoise((float)i + ofGetElapsedTimef() * paramVelocidad);
+		vertices[i].color = ofColor(c1 * 255.);
+		
+		if (paramAnimateWidth)
+			vertices[i].lineWidth = ofMap(ofNoise(ofGetElapsedTimef() * paramVelocidad), 0, 1, paramLineWidthMin, paramLineWidthMax);
+		else
+			vertices[i].lineWidth = paramLineWidthMin;
+	}
+
 	vector<Trazo> trazosNew;
 	vector<Trazo>::iterator it = trazos.begin();
 	while ( it != trazos.end() )
@@ -130,6 +144,9 @@ void AnimationManager::drawBolas()
 
 void AnimationManager::drawLineas()
 {
+	
+	mesh.clear();
+	
 	if (paramAnimateWidth)
 		ofSetLineWidth(ofMap(ofNoise(ofGetElapsedTimef() * paramVelocidad), 0, 1, paramLineWidthMin, paramLineWidthMax));
 	else
@@ -139,30 +156,49 @@ void AnimationManager::drawLineas()
 	ofVec2f offset2(0,0);
 	for (int i = 0 ; i < vertices.size() ; i++)
 	{
-		for (int v = 0 ; v < vertices[i].conexiones.size(); v++)
+		if (vertices[i].centro.x != -1 && vertices[i].centro.y != -1)
 		{
-			int index = vertices[i].conexiones[v];
-			if (paramVelocidadVertices > 0)
+
+			for (int v = 0 ; v < vertices[i].conexiones.size(); v++)
 			{
-				float x = ofSignedNoise(ofGetElapsedTimef() * paramVelocidadVertices, vertices[i].centro.y) * paramVerticesMaxDistance;
-				float y = ofSignedNoise(vertices[i].centro.x, ofGetElapsedTimef() * paramVelocidadVertices) * paramVerticesMaxDistance;
-				offset.set(x,y);
-				x = ofSignedNoise(ofGetElapsedTimef() * paramVelocidadVertices, vertices[index].centro.y) * paramVerticesMaxDistance;
-				y = ofSignedNoise(vertices[index].centro.x, ofGetElapsedTimef() * paramVelocidadVertices) * paramVerticesMaxDistance;
-				offset2.set(x,y);
+				int index = vertices[i].conexiones[v];
+				if (paramVelocidadVertices > 0)
+				{
+					float x = ofSignedNoise(ofGetElapsedTimef() * paramVelocidadVertices, vertices[i].centro.y) * paramVerticesMaxDistance;
+					float y = ofSignedNoise(vertices[i].centro.x, ofGetElapsedTimef() * paramVelocidadVertices) * paramVerticesMaxDistance;
+					offset.set(x,y);
+					x = ofSignedNoise(ofGetElapsedTimef() * paramVelocidadVertices, vertices[index].centro.y) * paramVerticesMaxDistance;
+					y = ofSignedNoise(vertices[index].centro.x, ofGetElapsedTimef() * paramVelocidadVertices) * paramVerticesMaxDistance;
+					offset2.set(x,y);
+				}
+				//ofLine(vertices[i].centro + offset, vertices[index].centro + offset2);
+				mesh.addVertex(vertices[i].centro + offset);
+				mesh.addVertex(vertices[index].centro + offset2);
+				mesh.addColor(vertices[i].color);
+				mesh.addColor(vertices[index].color);
 			}
-			ofLine(vertices[i].centro + offset, vertices[index].centro + offset2);
 		}
-		if (paramDrawBolas)
+	}
+	if (paramDrawLineas)
+	{
+		mesh.setMode(OF_PRIMITIVE_LINES);
+		mesh.drawWireframe();
+	}
+
+	if (paramDrawBolas)
+	{
+		for (int i = 0 ; i < vertices.size() ; i++)
 		{
 			ofFill();
 			float radius = ofMap(ofNoise((float)i + ofGetElapsedTimef() * paramVelocidad),0,1,paramBolasMinSize, paramBolasMaxSize);
 			float x = ofSignedNoise(ofGetElapsedTimef() * paramVelocidadVertices, vertices[i].centro.y) * paramVerticesMaxDistance;
 			float y = ofSignedNoise(vertices[i].centro.x, ofGetElapsedTimef() * paramVelocidadVertices) * paramVerticesMaxDistance;
 			offset.set(x,y);
+			ofSetColor(vertices[i].color);
 			ofCircle(vertices[i].centro + offset, radius );
 		}
 	}
+
 }
 
 
@@ -176,7 +212,12 @@ void AnimationManager::addTrazosForIndex(int index, vector<Trazo> &trazosNew)
 		if (!isTrazoActivo(index, conn[i]))
 		{
 			Trazo trazo;
-			trazo.setup(index, conn[i], vertices[index].centro, vertices[conn[i]].centro, ofRandom(paramTrazoMinSpeed, paramTrazoMaxSpeed));
+			trazo.setup(index, conn[i], vertices[index].centro, vertices[conn[i]].centro, 
+				ofRandom(paramTrazoMinSpeed, paramTrazoMaxSpeed), &vertices[index].lineWidth, &vertices[index].color, &vertices[i].color);
+			trazo.drawBola = paramDrawBolas;
+			trazo.drawLine = paramDrawLineas;
+			float radius = ofMap(ofNoise((float)i + ofGetElapsedTimef() * paramVelocidad),0,1,paramBolasMinSize, paramBolasMaxSize);
+			trazo.radius = radius;
 			trazosNew.push_back(trazo);
 			//doneIndexes.push_back(conn[i]);
 		}

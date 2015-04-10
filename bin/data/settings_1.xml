@@ -4,19 +4,22 @@
 	<Line_Width>1</Line_Width>
 <lineMapping/>
 <Edit>0</Edit>
-<Velocidad>4.096</Velocidad>
-	<Line_Width_Min>2.995</Line_Width_Min>
-	<Line_Width_Max>16.58</Line_Width_Max>
+<Velocidad>1.288</Velocidad>
+	<Line_Width_Min>3.28</Line_Width_Min>
+	<Line_Width_Max>3.28</Line_Width_Max>
 <Trazo_Min_Speed>1337.5</Trazo_Min_Speed>
 	<Trazo_Max_Speed>1337.5</Trazo_Max_Speed>
 <Fx_On>1</Fx_On>
-	<Fx_Passes>1</Fx_Passes>
+	<Fx_Passes>3</Fx_Passes>
 	<Fx_Radius>1</Fx_Radius>
-<Animation_Mode>0</Animation_Mode>
-	<Vel_Vertices>0</Vel_Vertices>
+<Animation_Mode>1</Animation_Mode>
+	<Vel_Vertices>0.25</Vel_Vertices>
 <Draw_Bolas>1</Draw_Bolas>
-	<Bolas_min_size>4.12</Bolas_min_size>
-	<Bolas_max_size>7.24</Bolas_max_size>
-<Vertices_Max_Dst>1</Vertices_Max_Dst>
-<Trazo_Animate_Width>0</Trazo_Animate_Width>
+	<Bolas_min_size>3.535</Bolas_min_size>
+	<Bolas_max_size>3.535</Bolas_max_size>
+<Vertices_Max_Dst>2.045</Vertices_Max_Dst>
+<Trazo_Animate_Width>1</Trazo_Animate_Width>
+<Animate_Color>1</Animate_Color>
+<Spout>0</Spout>
+	<Draw_Lines>1</Draw_Lines>
 </lineMapping>

@@ -13,6 +13,8 @@ struct VERTICE
 {
 	ofPoint		centro;			// vertice
 	vector<int> conexiones;		// índices dentro de vector<vertices>
+	ofColor		color;
+	float		lineWidth;
 };
 
 class AnimationManager
@@ -30,6 +32,7 @@ class AnimationManager
 
 		ofxIntSlider		paramAnimationMode;
 		ofxToggle			paramDrawBolas;
+		ofxToggle			paramDrawLineas;
 		ofxFloatSlider		paramBolasMinSize;
 		ofxFloatSlider		paramBolasMaxSize;
 		ofxFloatSlider		paramTrazoMinSpeed;			//Velocidad de las bolas
@@ -40,6 +43,7 @@ class AnimationManager
 		ofxToggle			paramAnimateWidth;
 		ofxFloatSlider		paramLineWidthMin;
 		ofxFloatSlider		paramLineWidthMax;
+		ofxToggle			paramAnimateColor;
 
 	protected:
 
@@ -59,4 +63,5 @@ class AnimationManager
 		vector<int>			doneIndexes;
 
 		vector<Trazo>		trazos;
+		ofMesh				mesh;
 };

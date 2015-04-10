@@ -25,6 +25,9 @@ void ofApp::setup(){
 
 	setupGui();
 	loadSettings(preset);
+
+	ofxSpout::init("ofxSpout sender example", ofGetWidth(), ofGetHeight(), true);	
+
 }
 
 //--------------------------------------------------------------
@@ -38,11 +41,17 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
+	// init sender if it's not already initialized
+	ofxSpout::initSender();
+	//cout << "spout: " << ofxSpout::_isSpoutTextureShared << endl;
 	if (paramEdit)
 		drawEdit();
 	else
 		drawAnimation();
-
+	
+	// send screen to Spout
+	ofxSpout::sendTexture();
+	
 	if (bGuiVisible)
 	{
 		ofSetColor(255,255,255);
@@ -415,6 +424,7 @@ void ofApp::setupGui()
     
 	gui.setup("lineMapping");
     
+    gui.add(paramSpout.setup("Spout", false));
     gui.add(paramEdit.setup("Edit", false));
 	gui.add(paramBackGroundColor.setup("BackGround", ofColor(0,0,0),ofColor(0,0),ofColor(255,255)));
     gui.add(paramLineColor.setup("Line Color", ofColor(0,0,0),ofColor(0,0),ofColor(255,255)));
@@ -424,6 +434,7 @@ void ofApp::setupGui()
 	gui.add(animationManager.paramVelocidad.setup("Velocidad", 1,.1,10));
 
 	gui.add(animationManager.paramDrawBolas.setup("Draw Bolas", false));
+	gui.add(animationManager.paramDrawLineas.setup("Draw Lines", false));
 	gui.add(animationManager.paramBolasMinSize.setup("Bolas min size", 1,1,40));
 	gui.add(animationManager.paramBolasMaxSize.setup("Bolas max size", 1,1,40));
 	gui.add(animationManager.paramVelocidadVertices.setup("Vel Vertices", 0, 0, 10));
@@ -433,6 +444,7 @@ void ofApp::setupGui()
     gui.add(animationManager.paramLineWidthMin.setup("Line Width Min", 1,1,20));
     gui.add(animationManager.paramLineWidthMax.setup("Line Width Max", 1,1,20));
 
+	gui.add(animationManager.paramAnimateColor.setup("Animate Color", false));
 
 	gui.add(animationManager.paramTrazoMinSpeed.setup("Trazo Min Speed", 100,100,10000));
     gui.add(animationManager.paramTrazoMaxSpeed.setup("Trazo Max Speed", 100,100,10000));
@@ -457,4 +469,10 @@ void ofApp::saveSettings(int p)
 	filename << "settings_" << p << ".xml";
 	gui.saveToFile(filename.str()); 
 	saveModel();
+}
+
+void ofApp::exit()
+{
+	// exit spout
+	ofxSpout::exit();
 }

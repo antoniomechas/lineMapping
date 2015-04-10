@@ -1,13 +1,20 @@
 #include "Trazo.h"
 
-void Trazo::setup ( int fromIndex, int toIndex, ofPoint from, ofPoint to, float totalTime )
+void Trazo::setup ( int fromIndex, int toIndex, ofPoint from, ofPoint to, float totalTime, 
+					float *width, ofColor *colorFrom, ofColor *colorTo )
 {
 	this->fromIndex = fromIndex;
 	this->toIndex = toIndex;
 	this->from = from;
 	this->to = to;
 	this->totalTime = totalTime;
-	
+	this->width = width;
+	this->colorFrom = colorFrom;
+	this->colorTo = colorTo;
+
+	drawBola = true;
+	radius = 5;
+
 	startTime = ofGetElapsedTimeMillis();
 	posActual = from;
 	bIsDone = false;
@@ -28,7 +35,24 @@ void Trazo::update ( )
 
 void Trazo::draw ( )
 {
-	ofCircle(posActual,5);
+	if (drawLine)
+	{
+		ofMesh mesh;
+		mesh.addVertex(from);
+		mesh.addVertex(posActual);
+		mesh.addColor(*colorFrom);
+		mesh.addColor(*colorTo);
+		mesh.setMode(OF_PRIMITIVE_LINES);
+		ofSetLineWidth(*width);
+		mesh.drawWireframe();
+	}
+	//ofLine(from, posActual);
+	if (drawBola)
+	{
+		ofSetColor(*colorFrom);
+		ofCircle(posActual, radius);
+	}
+
 }
 
 bool Trazo::isDone ()

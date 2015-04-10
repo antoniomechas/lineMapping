@@ -112,6 +112,9 @@
     <ClCompile Include="..\..\..\addons\ofxFX\src\ofxFXObject.cpp">
       <Filter>addons\ofxFx</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxSpout\src\ofxSpout.cpp">
+      <Filter>addons\ofxSpout</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -131,6 +134,9 @@
     </Filter>
     <Filter Include="addons\ofxFx">
       <UniqueIdentifier>{ab29a941-ebc8-4807-9491-0797483ffece}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxSpout">
+      <UniqueIdentifier>{bd9f7be2-e42b-41c4-a19f-82c244be2372}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -340,6 +346,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxFX\src\ofxSwapBuffer.h">
       <Filter>addons\ofxFx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSpout\src\ofxSpout.h">
+      <Filter>addons\ofxSpout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxSpout\src\Spout.h">
+      <Filter>addons\ofxSpout</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

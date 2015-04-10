@@ -75,7 +75,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxGui\libs;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxPostProcessing\src;..\..\..\addons\ofxFx\src;..\..\..\addons\ofxFx\src\filters</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxGui\libs;..\..\..\addons\ofxGui\src;..\..\..\addons\ofxPostProcessing\src;..\..\..\addons\ofxFx\src;..\..\..\addons\ofxFx\src\filters;..\..\..\addons\ofxSpout\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -85,8 +85,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);Spout32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxSpout\libs\lib\vs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -115,6 +115,7 @@
     <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\ToonPass.cpp" />
     <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\VerticalTiltShifPass.cpp" />
     <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\ZoomBlurPass.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxSpout\src\ofxSpout.cpp" />
     <ClCompile Include="src\AnimationManager.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
@@ -186,6 +187,8 @@
     <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\ToonPass.h" />
     <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\VerticalTiltShifPass.h" />
     <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\ZoomBlurPass.h" />
+    <ClInclude Include="..\..\..\addons\ofxSpout\src\ofxSpout.h" />
+    <ClInclude Include="..\..\..\addons\ofxSpout\src\Spout.h" />
     <ClInclude Include="src\AnimationManager.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxBaseGui.h" />
